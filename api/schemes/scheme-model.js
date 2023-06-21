@@ -1,20 +1,31 @@
+const db = require('../../data/db-config');
+
 function find() { // Egzersiz A
   /*
     1A- Aşağıdaki SQL sorgusunu SQLite Studio'da "data/schemes.db3" ile karşılaştırarak inceleyin.
     LEFT joini Inner joine çevirirsek ne olur?
 
       SELECT
-          sc.*,
-          count(st.step_id) as number_of_steps
+      sc.*,
+      count(st.step_id) as number_of_steps
       FROM schemes as sc
       LEFT JOIN steps as st
-          ON sc.scheme_id = st.scheme_id
+      ON sc.scheme_id = st.scheme_id
       GROUP BY sc.scheme_id
       ORDER BY sc.scheme_id ASC;
 
     2A- Sorguyu kavradığınızda devam edin ve onu Knex'te oluşturun.
     Bu işlevden elde edilen veri kümesini döndürün.
   */
+  return db("schemes")
+    .leftJoin("steps", function () {
+      this
+        .on('schemes.scheme_id', '=', 'steps.scheme_id')
+    })
+    .select("schemes.scheme_id", "schemes.scheme_name")
+    .count('steps.step_id as number_of_steps')
+    .groupBy('schemes.scheme_id')
+    .orderBy('schemes.scheme_id', "asc")
 }
 
 function findById(scheme_id) { // Egzersiz B
